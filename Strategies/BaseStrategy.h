@@ -16,7 +16,7 @@ class BaseStrategy {
 public:
     BaseStrategy(
                  const string& path_to_graph
-    ) :
+                 ) :
     path_to_graph(path_to_graph),
     logger(Logger::get()) {}
     
@@ -26,10 +26,9 @@ public:
         logger.println("\nStarting new journey:");
         
         this->opponent = opponent;
-        num_blockages_total = opponent->generate_blockages();
-        num_blockages_made = 0;
+        num_blockages_left = num_blockages_total = opponent->generate_blockages();
         
-        graph = load_graph(path_to_graph, logger);
+        graph.load(path_to_graph, logger);
         
         return travel();
     }
@@ -45,6 +44,7 @@ protected:
             graph.edges[vertex].erase(blockage);
             graph.edges[blockage].erase(vertex);
         }
+        num_blockages_left -= blockages.size();
         return blockages;
     }
 
@@ -53,7 +53,7 @@ protected:
     Logger& logger;
     
     size_t num_blockages_total;
-    size_t num_blockages_made;
+    size_t num_blockages_left;
     Graph graph;
     
     shared_ptr<BaseOpponent> opponent = nullptr;

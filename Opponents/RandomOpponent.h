@@ -1,8 +1,8 @@
 #pragma once
 #include<random>
-#include<queue>
 
 #include "BaseOpponent.h"
+#include "../Utiles/Graph.h"
 
 using namespace std;
 
@@ -13,10 +13,12 @@ public:
     RandomOpponent(
                    const string& path_to_graph,
                    size_t max_num_blockages,
-                   size_t is_deterministic = false
-    ) : BaseOpponent(path_to_graph, max_num_blockages) {
+                   size_t is_deterministic = false,
+                   size_t seed = 0
+                   ):
+    BaseOpponent(path_to_graph, max_num_blockages) {
         random_device rd;
-        gen = mt19937(is_deterministic ? 0 : rd());
+        gen = mt19937(is_deterministic ? seed : rd());
     }
 
 private:
@@ -49,18 +51,8 @@ private:
             }
             
             // checking connectivity
-            queue<size_t> q({0});
-            vector<bool> used(graph.num_vertices, false);
-            while(!q.empty()) {
-                size_t cur = q.front();
-                q.pop();
-                if (used[cur]) continue;
-                used[cur] = true;
-                for (auto& [to, _]: graph.edges[cur]) {
-                    if (!used[to] && !blockages[cur].contains(to)) q.push(to);
-                }
-            }
-            if (used[graph.num_vertices - 1]) break;
+            auto distances = graph.bfs(0, blockages);
+            if (distances[graph.num_vertices - 1] != SIZE_MAX) break;
         }
     }
     

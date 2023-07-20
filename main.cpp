@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "Opponents/RandomOpponent.h"
+#include "Opponents/OptimalOpponent.h"
 #include "Strategies/OptimalStrategy.h"
 
 using namespace std;
@@ -9,9 +9,10 @@ using namespace std;
 
 int main() {
     const string path = "../../../../../k-CTP/";
+    const string graph_path = path + "graph2.txt";
     Logger::path = path + "log.txt";
-    auto opponent = make_shared<RandomOpponent>(path + "graph.txt", 12);
-    OptimalStrategy strategy(path + "graph.txt");
+    auto opponent = make_shared<OptimalOpponent>(graph_path, 2);
+    OptimalStrategy strategy(graph_path);
     double result = strategy.go(opponent);
-    
+    cout << result << endl;
 }
