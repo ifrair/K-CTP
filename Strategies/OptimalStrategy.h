@@ -17,36 +17,29 @@ public:
     BaseStrategy(path_to_graph) {}
 
 private:
-    double travel() override {
-        size_t cur = 0;
-        vector<bool> used(graph.num_vertices, false);
-        double result = 0;
-        while (cur != graph.num_vertices - 1) {
-            used[cur] = true;
-            go_to_vertex(cur);
-            
+    void travel() override {
+        while (cur_vertex != graph.num_vertices - 1) {
             double max_path = 0;
             for (auto& adjacents: graph.edges) {
                 for (auto& [to, w]: adjacents) {
                     max_path += w;
                 }
             }
-            if (max_path - result <= 0) {
+            if (max_path - travel_distance <= 0) {
                 logger.println("Error! Too long travel!", true);
             }
             size_t to = get<1>(graph.get_optimal(
-                            cur,
+                            cur_vertex,
                             num_blockages_left,
-                            max_path - result,
+                            max_path - travel_distance,
                             used
                             ));
-            if (!graph.edges[cur].contains(to)) {
-                logger.println("ERROR! No such edge: " + to_string(cur) + "->" + to_string(to), true);
+            if (!graph.edges[cur_vertex].contains(to)) {
+                logger.println("ERROR! No such edge: " + to_string(cur_vertex) + "->" + to_string(to), true);
             }
-            result += graph.edges[cur][to];
-            cur = to;
+            travel_distance += graph.edges[cur_vertex][to];
+            cur_vertex = to;
+            go_to_vertex(cur_vertex);
         }
-        go_to_vertex(cur);
-        return result;
     }
 };

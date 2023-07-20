@@ -129,7 +129,7 @@ public:
             }
         }
         for (std::size_t mask = 0; mask < (1 << potential_blockages_to.size()); ++mask) {
-            std::size_t num_bits = __builtin_popcount(mask);
+            std::size_t num_bits = __builtin_popcount(signed(mask));
             if (num_bits > num_blockages) continue;
             
             std::vector<std::size_t> blockages;

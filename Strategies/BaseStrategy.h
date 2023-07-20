@@ -29,23 +29,37 @@ public:
         num_blockages_left = num_blockages_total = opponent->generate_blockages();
         
         graph.load(path_to_graph, logger);
+        used.clear();
+        used.resize(graph.num_vertices, false);
+        cur_vertex = SIZE_MAX;
+        go_to_vertex(0);
         
-        return travel();
+        travel();
+        logger.println("Result distace is " + to_string(travel_distance));
+        return travel_distance;
     }
 
 protected:
     // method to re-write
-    virtual double travel() = 0;
+    virtual void travel() = 0;
     
-    unordered_set<size_t> go_to_vertex(size_t vertex) {
+    void go_to_vertex(size_t vertex) {
+        if (cur_vertex != SIZE_MAX) {
+            if (!graph.edges[cur_vertex].contains(vertex)) {
+                logger.println("ERROR! No such edge: " + to_string(cur_vertex) + "->" + to_string(vertex), true);
+            }
+            travel_distance += graph.edges[cur_vertex][vertex];
+        }
+        cur_vertex = vertex;
+        
         logger.println("Go to " + to_string(vertex));
+        used[vertex] = true;
         auto blockages = opponent->go_to_vertex(vertex);
         for (auto blockage: blockages) {
             graph.edges[vertex].erase(blockage);
             graph.edges[blockage].erase(vertex);
         }
         num_blockages_left -= blockages.size();
-        return blockages;
     }
 
 protected:
@@ -55,6 +69,9 @@ protected:
     size_t num_blockages_total;
     size_t num_blockages_left;
     Graph graph;
+    vector<bool> used;
+    size_t cur_vertex = SIZE_MAX;
+    double travel_distance = 0;
     
     shared_ptr<BaseOpponent> opponent = nullptr;
 };

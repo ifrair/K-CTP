@@ -14,15 +14,16 @@ public:
                    const string& path_to_graph,
                    size_t max_num_blockages,
                    size_t is_deterministic = false,
-                   size_t seed = 0
+                   int seed = 0
                    ):
     BaseOpponent(path_to_graph, max_num_blockages) {
         random_device rd;
-        gen = mt19937(is_deterministic ? seed : rd());
+        this->seed = (is_deterministic ? seed : rd());
     }
 
 private:
     void set_blockages() override {
+        gen = mt19937(seed);
         while (true) {
             blockages.clear();
             blockages.resize(graph.num_vertices);
@@ -58,4 +59,5 @@ private:
     
 private:
     mt19937 gen;
+    int seed;
 };
