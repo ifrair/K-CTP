@@ -1,7 +1,5 @@
 #pragma once
 #include <stack>
-#include <vector>
-#include <unordered_set>
 
 #include "BaseStrategy.h"
 #include "../Utiles/Graph.h"

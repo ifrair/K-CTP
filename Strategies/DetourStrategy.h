@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
-#include <unordered_set>
+#include <cmath>
+#include <stack>
 
 #include "BaseStrategy.h"
 #include "../Utiles/Graph.h"
@@ -19,6 +19,32 @@ public:
 
 private:
     void travel() override {
-        
+        auto shortest_paths = graph.find_shortest_paths(graph.num_vertices - 1);
+        stack<size_t> path;
+        double w0 = 0;
+        while (cur_vertex != graph.num_vertices - 1) {
+            if (cur_vertex == 0) w0 = shortest_paths[0].first;
+            while (cur_vertex != graph.num_vertices - 1) {
+                path.push(cur_vertex);
+                size_t to = shortest_paths[cur_vertex].second;
+                if (!graph.edges[cur_vertex].contains(to)) {
+                    shortest_paths = graph.find_shortest_paths(graph.num_vertices - 1);
+                    break;
+                }
+                go_to_vertex(to);
+            }
+            if (cur_vertex != graph.num_vertices - 1) {
+                while (!path.empty()) {
+                    size_t to = path.top();
+                    path.pop();
+                    if (shortest_paths[cur_vertex].first <= w0 / sqrt(2)) {
+                        break;
+                    }
+                    if (to != cur_vertex) {
+                        go_to_vertex(to);
+                    }
+                }
+            }
+        }
     }
 };

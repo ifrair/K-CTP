@@ -38,6 +38,15 @@ public:
         logger.println("Generating " + to_string(max_num_blockages) + " blockages");
 
         set_blockages();
+        Graph end_graph = graph;
+        for (size_t from = 0; from < graph.num_vertices; ++from) {
+            for (auto to: blockages[from]) {
+                end_graph.edges[from].erase(to);
+                end_graph.edges[to].erase(from);
+            }
+        }
+        auto shortest_paths = end_graph.find_shortest_paths(graph.num_vertices - 1);
+        optimal_distance = shortest_paths[0].first;
         return max_num_blockages;
     }
     
@@ -57,6 +66,8 @@ public:
                            to_string(blockage) + " is blocked!");
             blockages[vertex].erase(blockage);
             blockages[blockage].erase(vertex);
+            graph.edges[vertex].erase(blockage);
+            graph.edges[blockage].erase(vertex);
         }
         num_blockages_left -= vertex_blockages.size();
         used[vertex] = true;
@@ -68,11 +79,14 @@ public:
     }
 
 protected:
-    // method to re-write
+    // method to re-write on oblivious opponent
     virtual void set_blockages() {}
     
-    // method to re-write
+    // method to re-write on other cases
     virtual void set_vertex_blockages(size_t vertex) {}
+
+public:
+    double optimal_distance;
     
 protected:
     string path_to_graph;

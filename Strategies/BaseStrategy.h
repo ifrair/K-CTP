@@ -35,8 +35,13 @@ public:
         go_to_vertex(0);
         
         travel();
+        if (cur_vertex != graph.num_vertices - 1)
+            logger.println("Error! Ended not in the finish vertex", true);
         logger.println("Result distace is " + to_string(travel_distance));
-        return travel_distance;
+        logger.println("Optimal distace is " + to_string(opponent->optimal_distance));
+        double competitive_ratio = travel_distance / opponent->optimal_distance;
+        logger.println("Competitive ratio is " + to_string(competitive_ratio));
+        return competitive_ratio;
     }
 
 protected:

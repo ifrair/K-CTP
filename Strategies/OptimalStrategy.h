@@ -34,12 +34,7 @@ private:
                             max_path - travel_distance,
                             used
                             ));
-            if (!graph.edges[cur_vertex].contains(to)) {
-                logger.println("ERROR! No such edge: " + to_string(cur_vertex) + "->" + to_string(to), true);
-            }
-            travel_distance += graph.edges[cur_vertex][to];
-            cur_vertex = to;
-            go_to_vertex(cur_vertex);
+            go_to_vertex(to);
         }
     }
 };
