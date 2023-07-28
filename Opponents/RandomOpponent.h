@@ -29,7 +29,7 @@ private:
             blockages.resize(graph.num_vertices);
             
             for (size_t i = 0; i < max_num_blockages; ++i) {
-                uniform_int_distribution<size_t> dist(1, (graph.num_edges - i) * 2);
+                uniform_int_distribution<size_t> dist(1, (graph.start_num_edges - i) * 2);
                 size_t edge_num = dist(gen);
                 
                 for (size_t from = 0; from < graph.num_vertices; ++from) {

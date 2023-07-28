@@ -29,7 +29,7 @@ private:
         for(size_t node = 1; node < graph.num_vertices - 1; ++ node) {
             num_2_edged_verteces += (graph.edges[node].size() == 2);
         }
-        if (graph.num_edges - graph.edges[0].size() + 2 != graph.num_vertices ||
+        if (graph.start_num_edges - graph.edges[0].size() + 2 != graph.num_vertices ||
             graph.edges[0].size() != graph.edges[graph.num_vertices - 1].size() ||
             num_2_edged_verteces != graph.num_vertices - 2) {
             logger.println("Error! Graph does't consist of node-disjoint s-t paths", true);
@@ -91,7 +91,7 @@ private:
                 double dist = paths[path].first;
                 prob_result -= ((2 - i) * dist + 2 * (sum - dist)) / i / i / dist;
                 if (prob_result <= 0) {
-                    go_to_path(paths[path].second, shortest_distances);
+                    follow_shortest_path(paths[path].second, shortest_distances);
                     path_used[path] = true;
                     sum -= dist;
                     break;
@@ -101,25 +101,7 @@ private:
         
     }
     
-    void go_to_path(size_t to, const vector<pair<double, size_t>>& shortest_distances) {
-        stack<size_t> path({0});
-        go_to_vertex(to);
-        while (cur_vertex != graph.num_vertices - 1) {
-            size_t to = shortest_distances[cur_vertex].second;
-            path.push(to);
-            if (!graph.edges[cur_vertex].contains(to)) {
-                break;
-            }
-            go_to_vertex(to);
-        }
-        if (cur_vertex == graph.num_vertices - 1) return;
-        path.pop();
-        while (!path.empty()) {
-            size_t to = path.top();
-            path.pop();
-            go_to_vertex(to);
-        }
-    }
+    
 
 private:
     mt19937 gen;

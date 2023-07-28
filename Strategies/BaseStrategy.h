@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 #include <unordered_set>
 #include <vector>
 
@@ -48,7 +49,7 @@ protected:
     // method to re-write
     virtual void travel() = 0;
     
-    void go_to_vertex(size_t vertex) {
+    unordered_set<size_t> go_to_vertex(size_t vertex) {
         if (cur_vertex != SIZE_MAX) {
             if (!graph.edges[cur_vertex].contains(vertex)) {
                 logger.println("ERROR! No such edge: " + to_string(cur_vertex) + "->" + to_string(vertex), true);
@@ -65,6 +66,30 @@ protected:
             graph.edges[blockage].erase(vertex);
         }
         num_blockages_left -= blockages.size();
+        return blockages;
+    }
+    
+    void follow_shortest_path(size_t to, const vector<pair<double, size_t>>& shortest_distances) {
+        stack<size_t> path;
+        if (to != 0) {
+            go_to_vertex(to);
+            path.push(0);
+        }
+        while (cur_vertex != graph.num_vertices - 1) {
+            path.push(cur_vertex);
+            to = shortest_distances[cur_vertex].second;
+            if (!graph.edges[cur_vertex].contains(to)) {
+                break;
+            }
+            go_to_vertex(to);
+        }
+        if (cur_vertex == graph.num_vertices - 1) return;
+        path.pop();
+        while (!path.empty()) {
+            size_t to = path.top();
+            path.pop();
+            go_to_vertex(to);
+        }
     }
 
 protected:

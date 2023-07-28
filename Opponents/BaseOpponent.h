@@ -33,7 +33,7 @@ public:
         auto distanсes = graph.bfs(0);
         num_blockages_left = max_num_blockages = min(
                                                      max_num_blockages,
-                                                     graph.num_edges - distanсes[graph.num_vertices - 1]
+                                                     graph.start_num_edges - distanсes[graph.num_vertices - 1]
                                                      );
         logger.println("Generating " + to_string(max_num_blockages) + " blockages");
 

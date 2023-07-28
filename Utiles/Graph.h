@@ -11,13 +11,31 @@ using Edges = std::vector<std::unordered_map<std::size_t, double>>;
 
 class Graph {
 public:
+    Graph() = default;
+    Graph(size_t num_vertices, size_t start_num_edges = 0, Edges edges = {}) :
+    num_vertices(num_vertices),
+    start_num_edges(start_num_edges),
+    edges(edges) {
+        this->edges.resize(num_vertices);
+    }
+    
+    Graph reverse() const {
+        Graph reversed_graph(num_vertices);
+        for (size_t from = 0; from < num_vertices; ++from) {
+            for (auto [to, w]: edges[from]) {
+                reversed_graph.edges[to][from] = w;
+            }
+        }
+        return reversed_graph;
+    }
+    
     // loading graph from file
     void load(const std::string& path_to_graph, Logger& logger) {
         std::ifstream fin(path_to_graph);
         if (!fin.is_open()) {
             logger.println("ERROR! No graph file found by path " + path_to_graph, true);
         }
-        fin >> num_vertices >> num_edges;
+        fin >> num_vertices >> start_num_edges;
         
         if (fin.fail()) {
             logger.println("ERROR! Can't read graph file by path " + path_to_graph, true);
@@ -25,7 +43,7 @@ public:
         edges.clear();
         edges.resize(num_vertices);
         
-        for(std::size_t i = 0; i < num_edges; ++i) {
+        for(std::size_t i = 0; i < start_num_edges; ++i) {
             std::size_t from, to;
             double w;
             fin >> from  >> to >> w;
@@ -180,6 +198,6 @@ public:
     
 public:
     std::size_t num_vertices;
-    std::size_t num_edges;
+    std::size_t start_num_edges = 0;
     Edges edges;
 };
