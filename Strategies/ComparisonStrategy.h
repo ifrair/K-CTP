@@ -22,7 +22,6 @@ private:
             auto shortest_paths = graph.find_shortest_paths(graph.num_vertices - 1);
             stack<size_t> path;
             while (cur_vertex != graph.num_vertices - 1) {
-                path.push(cur_vertex);
                 size_t to = shortest_paths[cur_vertex].second;
                 if (!graph.edges[cur_vertex].contains(to)) {
                     shortest_paths = graph.find_shortest_paths(graph.num_vertices - 1);
@@ -31,15 +30,14 @@ private:
                     }
                     continue;
                 }
+                path.push(cur_vertex);
                 go_to_vertex(to);
             }
-            if (cur_vertex != graph.num_vertices - 1) {
+            if (cur_vertex == graph.num_vertices - 1) break;
+            while (!path.empty()) {
+                size_t to = path.top();
                 path.pop();
-                while (!path.empty()) {
-                    size_t to = path.top();
-                    path.pop();
-                    go_to_vertex(to);
-                }
+                go_to_vertex(to);
             }
         }
     }

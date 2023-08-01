@@ -51,7 +51,7 @@ private:
         sort(paths.begin(), paths.end());
         paths.resize(min(paths.size(), num_blockages_total + 1));
         
-        // going pathes
+        // going paths
         vector<pair<double, size_t>> block_paths;
         double block_sum = 0;
         for (size_t path = 0; path < paths.size(); ++path) {
@@ -92,6 +92,7 @@ private:
                 prob_result -= ((2 - i) * dist + 2 * (sum - dist)) / i / i / dist;
                 if (prob_result <= 0) {
                     follow_shortest_path(paths[path].second, shortest_distances);
+                    if (cur_vertex == graph.num_vertices - 1) return;
                     path_used[path] = true;
                     sum -= dist;
                     break;

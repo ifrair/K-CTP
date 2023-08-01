@@ -196,6 +196,79 @@ public:
         return {(result == -1 ? INFINITY : result), result_to, result_blockages};
     }
     
+    static Graph generate_graph(
+                        std::size_t _num_vertices,
+                        std::size_t _num_edges,
+                        int max_edge_value,
+                        int seed = 0,
+                        const std::string& path = ""
+                        ) {
+        Graph graph;
+        graph.num_vertices = _num_vertices;
+        std::size_t max_num_edges = graph.num_vertices * (graph.num_vertices - 1) / 2;
+        graph.start_num_edges = std::max((size_t)1,
+                                         std::min(
+                                                  _num_edges,
+                                                  max_num_edges
+                                                  )
+                                         );
+        std::mt19937 gen = std::mt19937(seed);
+        while (true) {
+            // trying generating graph
+            graph.edges.clear();
+            graph.edges.resize(graph.num_vertices);
+            std::vector<std::size_t> edges_nums;
+            for (std::size_t i = 0; i < graph.start_num_edges; ++i) {
+                std::uniform_int_distribution<std::size_t> dist(
+                                                                1,
+                                                                max_num_edges - i
+                                                                );
+                std::size_t num = dist(gen);
+                for (auto other: edges_nums) {
+                    if (other <= num) ++num;
+                }
+                edges_nums.push_back(num);
+                sort(edges_nums.begin(), edges_nums.end());
+            }
+            
+            std::size_t cur = 0;
+            std::size_t edge_num = 0;
+            for (std::size_t i = 0; i < graph.num_vertices; ++i) {
+                if (i + cur < edges_nums[edge_num]) {
+                    cur += i;
+                    continue;
+                }
+                for (std::size_t j = 0; j < i; ++j) {
+                    ++cur;
+                    if (cur == edges_nums[edge_num]) {
+                        ++edge_num;
+                        std::uniform_int_distribution<int> dist(1, max_edge_value);
+                        double w = dist(gen);
+                        graph.edges[i][j] = w;
+                        graph.edges[j][i] = w;
+                    }
+                    if (edge_num == graph.start_num_edges) break;
+                }
+                if (edge_num == graph.start_num_edges) break;
+            }
+            auto distances = graph.bfs(graph.num_vertices - 1);
+            if (distances[0] != SIZE_MAX) break;
+        }
+        
+        if (path.size() == 0) return graph;
+        std::ofstream fout(path, std::ios_base::trunc);
+        fout << graph.num_vertices << ' ' << graph.start_num_edges << std::endl;
+        for (std::size_t i = 0; i < graph.num_vertices; ++i) {
+            for (auto& [j, w]: graph.edges[i]) {
+                if (i < j) {
+                    fout << i << ' ' << j << ' ' << w << std::endl;
+                }
+            }
+        }
+        fout.close();
+        return graph;
+    }
+    
 public:
     std::size_t num_vertices;
     std::size_t start_num_edges = 0;

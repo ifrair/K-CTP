@@ -84,6 +84,7 @@ private:
             }
             vertex_q = new_vertex_q;
         }
+        
         // implicit tree representation
         Graph tree(shortest_distances[0].size());
         vector<set<double>> achived_distances(graph.num_vertices);
@@ -133,7 +134,7 @@ private:
             
             vertex_q = new_vertex_q;
         }
-
+        
         return {tree, vertex_mapping};
     }
     
@@ -156,6 +157,7 @@ private:
                     sum_start += probabilities[node];
                 }
             }
+            if (sum_start == 0) break;
             uniform_real_distribution<> dist(0, sum_start);
             double rand_res = dist(gen);
             for (size_t node = 0; node < tree.num_vertices; ++node) {

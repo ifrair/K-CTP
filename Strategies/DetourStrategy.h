@@ -33,16 +33,15 @@ private:
                 }
                 go_to_vertex(to);
             }
-            if (cur_vertex != graph.num_vertices - 1) {
-                while (!path.empty()) {
-                    size_t to = path.top();
-                    path.pop();
-                    if (shortest_paths[cur_vertex].first <= w0 / sqrt(2)) {
-                        break;
-                    }
-                    if (to != cur_vertex) {
-                        go_to_vertex(to);
-                    }
+            if (cur_vertex == graph.num_vertices - 1) break;
+            while (!path.empty()) {
+                size_t to = path.top();
+                path.pop();
+                if (to != cur_vertex) {
+                    go_to_vertex(to);
+                }
+                if (shortest_paths[cur_vertex].first <= w0 / sqrt(2)) {
+                    break;
                 }
             }
         }
