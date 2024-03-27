@@ -14,7 +14,7 @@ class BaseOpponent {
 public:
     BaseOpponent(
                  const string& path_to_graph,
-                 size_t max_num_blockages
+                 size_t max_num_blockages = 0
                  ) :
     path_to_graph(path_to_graph),
     max_num_blockages(max_num_blockages),

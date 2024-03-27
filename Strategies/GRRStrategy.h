@@ -33,6 +33,7 @@ private:
             uniform_int_distribution<size_t> dist(1, num_blockages_left + 1);
             size_t rand_res = dist(gen);
             if (rand_res == 1) {
+                logger.println("Apex tree traverse");
                 auto response = create_tree((1 + alpha) * shortest_distances[0].first);
                 auto tree = response.first;
                 auto vertex_mapping = response.second;

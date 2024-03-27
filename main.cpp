@@ -11,6 +11,7 @@ int main() {
     
     const string path = "../../../../../k-CTP/";
     const string graph_path = path + "graph_paths.txt";
+    const string blockages_path = path + "blockages.txt";
     Logger::path = path + "log.txt";
     
 //    size_t num_vertices = 10;
@@ -64,9 +65,9 @@ int main() {
 //    for (auto i: mx) cout << i << ", ";cout << endl;
 //    for (auto i: mxavg) cout << i << ", ";cout << endl;
     
-    int seed_min = 0, seed_max = 1000;
+    int seed_min = 0, seed_max = 100 ;
     int game_seed_min = 421, game_seed_max = 421;
-    size_t k = 5;
+    size_t k = 10;
 
     
     double avg_sum = 0;
@@ -74,29 +75,50 @@ int main() {
     double max_avg_rate = 0, max_avg_seed = 0;
     size_t num_results = 0;
     
+//    int tt = 0;
+//    for (int i = 11; i <= 20; ++i) {
+//        for (int j = 21 + tt; j < 21 + tt + 40; ++j) {
+//            cout << i << ' ' << j << ' ' << 1 << endl;
+//        }
+//        tt += 40;
+//    }
+//    for (int i = 21; i < 21 + tt; ++i) {
+//        cout << i << ' ' << 21 + tt << ' ' << 1 << endl;
+//    }
+//    return 0;
+    
+//    for (int seed = seed_min; seed <= seed_max; ++seed) {
+//        double result_sum = 0;
+//        for(int game_seed = game_seed_min; game_seed <= game_seed_max; ++game_seed) {
+//            auto opponent = make_shared<RandomOpponent>(graph_path, k, 1, game_seed);
+//            GRRStrategy strategy(graph_path, 1, seed);
+//            double result = strategy.go(opponent);
+//            result_sum += result;
+//            if (result > max_rate) {
+//                max_rate = result;
+//                max_seed = seed;
+//            }
+//        }
+//        result_sum /= (game_seed_max - game_seed_min + 1);
+//        if (result_sum > max_avg_rate) {
+//            max_avg_rate = result_sum;
+//            max_avg_seed = seed;
+//        }
+//        avg_sum += result_sum;
+//        ++num_results;
+//    }
     for (int seed = seed_min; seed <= seed_max; ++seed) {
-        double result_sum = 0;
-        for(int game_seed = game_seed_min; game_seed <= game_seed_max; ++game_seed) {
-            auto opponent = make_shared<RandomOpponent>(graph_path, k, 1, game_seed);
-            GRRStrategy strategy(graph_path, 1, seed);
-            double result = strategy.go(opponent);
-            result_sum += result;
-            if (result > max_rate) {
-                max_rate = result;
-                max_seed = seed;
-            }
-        }
-        result_sum /= (game_seed_max - game_seed_min + 1);
-        if (result_sum > max_avg_rate) {
-            max_avg_rate = result_sum;
-            max_avg_seed = seed;
-        }
-        avg_sum += result_sum;
+        auto opponent = make_shared<FixedOpponent>(graph_path, blockages_path);
+        GRRStrategy strategy(graph_path, 1, seed);
+        double result = strategy.go(opponent);
+        avg_sum += result;
         ++num_results;
+        cout << result << ' ' << seed - seed_min + 1 << '/' << seed_max - seed_min + 1 << " complited" << endl;
     }
+    
     avg_sum /= num_results;
     cout << "Blockages number: " << k << endl;
     cout << "Average rate: " << avg_sum << endl;
-    cout << "Maximal average rate: " << max_avg_rate << " with seed " << max_avg_seed << endl;
-    cout << "Maximal rate: " << max_rate << " with seed " << max_seed <<  endl << endl;
+//    cout << "Maximal average rate: " << max_avg_rate << " with seed " << max_avg_seed << endl;
+//    cout << "Maximal rate: " << max_rate << " with seed " << max_seed <<  endl << endl;
 }
